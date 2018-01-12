@@ -1,8 +1,12 @@
 # 100x100m Timer
 
-## Features
+## Anwendung
 
-Dieses Python Script ist als Timer und Counter für die Mutter aller Ausdauerübungen, den 100x100m gedacht.
+Dieses Pythonscript ist als Timer und Counter für die Mutter aller Ausdauerübungen, den 100x100m GA1 Schwimmen gedacht.
+
+Es kann natürlich für beliebige Sportarten neben Schwimmen mit beliebigen Serienwiederholungen benutzt werden.
+
+## Features
 
 Es können folgende Optionen eingestellt werden:
  * Countdown vor der eigentlichen Serie
