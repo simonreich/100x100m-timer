@@ -57,7 +57,6 @@ pygame.init()
 screen = pygame.display.set_mode((1920, 1020))
 clock = pygame.time.Clock()
 
-counter, text = timePrecounter, str(timePrecounter).rjust(3)
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 font = pygame.font.SysFont('Consolas', 600)
 
@@ -121,7 +120,7 @@ while True:
                 cTimePrecounter -= 1
                 m, s = divmod(cTimePrecounter, 60)
                 textTop = "Los!"
-                textBottom = str(m).rjust(2) + ":" + str(s).rjust(2) + " s"
+                textBottom = str(m).rjust(2) + ":" + str(s).rjust(2) + " m"
 
                 # Play sounds
                 if cTimePrecounter == 2:
@@ -175,7 +174,7 @@ while True:
                 cTimeBreak -= 1
                 m, s = divmod(cTimeBreak, 60)
                 textTop = "Pause"
-                textBottom = str(m).rjust(1) + ":" + str(s).ljust(2) + " s"
+                textBottom = str(m).rjust(1) + ":" + str(s).ljust(2) + " m"
 
                 # Play sounds
                 if cTimeBreak == 2:
