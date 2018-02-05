@@ -29,7 +29,7 @@ pip install pygame
 
 Clone timer & have fun!
 
-``bash
+```bash
 git clone https://github.com/simonreich/100x100m-timer.git
 cd 100x100m-timer
 python ./timer.py
