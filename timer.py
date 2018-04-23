@@ -175,7 +175,6 @@ class Timer():
                 self.cTimeLap = self.timeLap
 
             # Is a break comming up
-            print (self.timeLap, self.cNrLap, self.cNrBreak)
             if self.cNrLap in self.cNrBreak:
                 self.cTimeBreak = self.timeBreak
                 self.cNrBreak.remove(self.cNrLap)
