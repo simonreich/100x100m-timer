@@ -20,10 +20,10 @@ This file is part of 100x100m Timer.
 
 
 # Time before counter starts in seconds
-timePrecounter = 3
+timePrecounter = 5
 
 # Number of laps
-nrLap = 5
+nrLap = 1
 
 # Break before this laps
 # For example nrBreak = [10, 20], means that a break will be inserted between lap 9-10 and lap lap 19-20
@@ -31,7 +31,7 @@ nrLap = 5
 nrBreak = [2, 5]
 
 # Length of break in seconds
-timeBreak = 15
+timeBreak = 5
 
 # Turn sound on or off
 #soundState = "on"
@@ -129,6 +129,10 @@ class Timer():
         # Pitch of start tunes
         self.tunePitch = deepcopy(_soundPitch)
 
+        # Sound test
+        for _pitch in self.tunePitch:
+            Note(_pitch).play(100)
+
     def update(self):
         # Phase 1 is Countdown before timer
         if self.phase == 1:
@@ -213,7 +217,7 @@ class Timer():
 
         # Phase 4 is done
         if self.phase == 4:
-            self.textTop = "# " + str(self.cNrLap).ljust(3)
+            self.textTop = "# " + str(self.cNrLap-1).ljust(3)
             self.textBottom = "Fertig!"
 
     def getText(self):
