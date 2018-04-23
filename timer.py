@@ -23,15 +23,20 @@ This file is part of 100x100m Timer.
 timePrecounter = 3
 
 # Number of laps
-nrLap = 100
+nrLap = 5
 
 # Break before this laps
 # For example nrBreak = [10, 20], means that a break will be inserted between lap 9-10 and lap lap 19-20
 # Leave empty for no breaks nrBreak = []
-nrBreak = [31, 51, 81]
+nrBreak = [2, 5]
 
 # Length of break in seconds
-timeBreak = 300
+timeBreak = 15
+
+# Turn sound on or off
+#soundState = "on"
+#soundState = "off"
+soundState = "on"
 
 
 
@@ -45,6 +50,7 @@ import pygame
 from pygame.mixer import Sound, get_init, pre_init
 from array import array
 import sys
+from copy import deepcopy
 
 
 
@@ -71,23 +77,23 @@ class Note(Sound):
 
 
 class Timer():
-    def __init__(self, _timePrecounter, _timeLap, _nrLap, _nrBreak, _timeBreak):
+    def __init__(self, _timePrecounter, _timeLap, _nrLap, _nrBreak, _timeBreak, _soundState, _soundPitch):
         # Time before counter starts in seconds
-        self.timePrecounter = _timePrecounter
+        self.timePrecounter = deepcopy(_timePrecounter)
 
         # Time for one lap in seconds
-        self.timeLap = _timeLap
+        self.timeLap = deepcopy(_timeLap)
 
         # Number of laps
-        self.nrLap = _nrLap
+        self.nrLap = deepcopy(_nrLap)
 
         # Break before this laps
         # For example nrBreak = [10, 20], means that a break will be inserted between lap 9-10 and lap lap 19-20
         # Leave empty for no breaks nrBreak = []
-        self.nrBreak = _nrBreak
+        self.nrBreak = deepcopy(_nrBreak)
 
         # Length of break in seconds
-        self.timeBreak = _timeBreak
+        self.timeBreak = deepcopy(_timeBreak)
 
         # The window always shows two texts:
         self.textTop = ""
@@ -101,22 +107,27 @@ class Timer():
         self.phase = 1
 
         # Countdown
-        self.cTimePrecounter = self.timePrecounter
+        self.cTimePrecounter = deepcopy(self.timePrecounter)
         self.m, self.s = divmod(self.timePrecounter, 60)
 
         # Timer
-        self.cTimeLap = self.timeLap
+        self.cTimeLap = deepcopy(self.timeLap)
         self.cNrLap = 1
 
         # Break
-        self.cTimeBreak = self.timeBreak
-        self.cNrBreak = self.nrBreak
+        self.cTimeBreak = deepcopy(self.timeBreak)
+        self.cNrBreak = deepcopy(self.nrBreak)
 
         # Sound
+        # Turn sound on/off
+        self.soundState = deepcopy(_soundState)
+
+        # Sound
+        # Used internally such that no sound before breaks are played
         self.sound = "on"
 
         # Pitch of start tunes
-        self.tunePitch = [440, 440, 440]
+        self.tunePitch = deepcopy(_soundPitch)
 
     def update(self):
         # Phase 1 is Countdown before timer
@@ -129,11 +140,14 @@ class Timer():
 
             # Play sounds
             if self.cTimePrecounter == 2:
-                Note(self.tunePitch[0]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[0]).play(100)
             if self.cTimePrecounter == 1:
-                Note(self.tunePitch[1]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[1]).play(100)
             if self.cTimePrecounter <= 0:
-                Note(self.tunePitch[2]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[2]).play(100)
                 self.phase = 2
 
         # Phase 2 is Timer
@@ -146,11 +160,14 @@ class Timer():
 
             # Play sounds
             if self.cTimeLap == 2 and self.sound == "on":
-                Note(self.tunePitch[0]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[0]).play(100)
             if self.cTimeLap == 1 and self.sound == "on":
-                Note(self.tunePitch[1]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[1]).play(100)
             if self.cTimeLap <= 0 and self.sound == "on":
-                Note(self.tunePitch[2]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[2]).play(100)
 
             # Is lap finished
             if self.cTimeLap <= 0:
@@ -158,14 +175,15 @@ class Timer():
                 self.cTimeLap = self.timeLap
 
             # Is a break comming up
-            if self.cNrLap in self.nrBreak:
+            print (self.timeLap, self.cNrLap, self.cNrBreak)
+            if self.cNrLap in self.cNrBreak:
                 self.cTimeBreak = self.timeBreak
                 self.cNrBreak.remove(self.cNrLap)
                 self.phase = 3
 
             # Is series finished
             if self.cNrLap > self.nrLap:
-                self.self.phase= 4
+                self.phase= 4
 
             # do not play sounds before break or end
             if self.cNrLap+1 in self.nrBreak or self.cNrLap+1 > self.nrLap:
@@ -183,18 +201,21 @@ class Timer():
 
             # Play sounds
             if self.cTimeBreak == 2:
-                Note(self.tunePitch[0]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[0]).play(100)
             if self.cTimeBreak == 1:
-                Note(self.tunePitch[1]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[1]).play(100)
             if self.cTimeBreak <= 0:
-                Note(self.tunePitch[2]).play(100)
+                if (self.soundState == "on"):
+                    Note(self.tunePitch[2]).play(100)
                 self.cTimeLap = self.timeLap
                 self.phase = 2
 
         # Phase 4 is done
         if self.phase == 4:
-            self.textTop = "Lap: " + str(self.cNrLap).ljust(3) + " Fertig"
-            self.textBottom = "Geschafft!"
+            self.textTop = "# " + str(self.cNrLap).ljust(3)
+            self.textBottom = "Fertig!"
 
     def getText(self):
         return self.textTop, self.textBottom
@@ -218,10 +239,12 @@ def main(argv=None):
 
 
     # Class 1: 120s
-    timer120 = Timer(timePrecounter, 5, nrLap, nrBreak, timeBreak)
+    pitch = [440, 440, 440]
+    timer120 = Timer(timePrecounter, 12, nrLap, nrBreak, timeBreak, soundState, pitch)
 
     # Class 2: 135s
-    timer135 = Timer(timePrecounter, 7, nrLap, nrBreak, timeBreak)
+    pitch = [380, 380, 380]
+    timer135 = Timer(timePrecounter, 8, nrLap, nrBreak, timeBreak, soundState, pitch)
 
     # This is the main loop
     while True:
