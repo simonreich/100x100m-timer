@@ -20,18 +20,18 @@ This file is part of 100x100m Timer.
 
 
 # Time before counter starts in seconds
-timePrecounter = 5
+timePrecounter = 30
 
 # Number of laps
-nrLap = 1
+nrLap = 100
 
 # Break before this laps
 # For example nrBreak = [10, 20], means that a break will be inserted between lap 9-10 and lap lap 19-20
 # Leave empty for no breaks nrBreak = []
-nrBreak = [2, 5]
+nrBreak = [25, 50, 75]
 
 # Length of break in seconds
-timeBreak = 5
+timeBreak = 300
 
 # Turn sound on or off
 #soundState = "on"
