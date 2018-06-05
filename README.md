@@ -34,3 +34,8 @@ git clone https://github.com/simonreich/100x100m-timer.git
 cd 100x100m-timer
 python ./timer.py
 ```
+
+## TODO
+
+ * Sound does not always work. Sometimes ALSA throws an error message at program start and there is no sound. Restarting the program fixes the issue. Todo: Find a more reliable way to play sounds.
+ * Allow for timer start at specific time. E.g. start timer at exactly 8:00:00pm or start timer next at x:xx:00 o'clock - meaning at the full minute. This way the timer can be easily synchonized with clocks running in the same room.
