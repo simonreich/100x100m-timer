@@ -13,14 +13,22 @@ This file is part of 100x100m Timer.
     along with 100x100m Timer.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# (c) Simon Reich 2018
+# (c) Simon Reich 2018 - 2019
 
 ######################################################
 
 
+# Use fixed time (system clock) to start first lap or use countdown (set in seconds below)
+#precounter = "countdown"
+#precounter = "time"
+precounter = "time"
 
-# Time before counter starts in seconds
-timePrecounter = 30
+# If precounter is set to "time", the below starting times are used in format "HH:mm:ss" (e.g. "16:45:00" to start at quarter to five o'clock)
+timePrecounterTime120 = "14:40:00"
+timePrecounterTime135 = "14:15:00"
+
+# If precounter is set to "countdown", the below time is the time before counter starts in seconds
+timePrecounterCountdown = 30
 
 # Number of laps
 nrLap = 100
@@ -28,7 +36,7 @@ nrLap = 100
 # Break before this laps
 # For example nrBreak = [10, 20], means that a break will be inserted between lap 9-10 and lap lap 19-20
 # Leave empty for no breaks nrBreak = []
-nrBreak = [25, 50, 75]
+nrBreak = [31, 61, 81]
 
 # Length of break in seconds
 timeBreak = 300
@@ -48,6 +56,8 @@ soundState = "on"
 
 import pygame
 from pygame.mixer import Sound, get_init, pre_init
+from datetime import datetime
+import time
 from array import array
 import sys
 from copy import deepcopy
@@ -77,9 +87,25 @@ class Note(Sound):
 
 
 class Timer():
-    def __init__(self, _timePrecounter, _timeLap, _nrLap, _nrBreak, _timeBreak, _soundState, _soundPitch):
+    def __init__(self, _precounter, _timePrecounterCountdown, _timePrecounterTime, _timeLap, _nrLap, _nrBreak, _timeBreak, _soundState, _soundPitch):
+        # Start timer at fixed system time or use countdown
+        self.precounter = deepcopy(_precounter)
+
         # Time before counter starts in seconds
-        self.timePrecounter = deepcopy(_timePrecounter)
+        self.timePrecounterCountdown = deepcopy(_timePrecounterCountdown)
+
+        # System time to start counter
+        self.timePrecounterTime = deepcopy(_timePrecounterTime)
+
+        # Compute countdown in seconds.
+        if self.precounter == "time":
+            time = _timePrecounterTime.split(":")
+            d1 = datetime(datetime.now().year, datetime.now().month, datetime.now().day, int(time[0]), int(time[1]), int(time[2]))
+            d2 = datetime.now()
+            diff = d1 - d2
+            diff_in_seconds = diff.days*24*60*60 + diff.seconds
+            print( "Start " + str(diff_in_seconds))
+            self.timePrecounterCountdown = diff_in_seconds
 
         # Time for one lap in seconds
         self.timeLap = deepcopy(_timeLap)
@@ -107,8 +133,8 @@ class Timer():
         self.phase = 1
 
         # Countdown
-        self.cTimePrecounter = deepcopy(self.timePrecounter)
-        self.m, self.s = divmod(self.timePrecounter, 60)
+        self.cTimePrecounter = deepcopy(self.timePrecounterCountdown)
+        self.m, self.s = divmod(self.timePrecounterCountdown, 60)
 
         # Timer
         self.cTimeLap = deepcopy(self.timeLap)
@@ -231,6 +257,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
+    # Pygame initialization
     pre_init(44100, -16, 1, 1024)
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
@@ -239,15 +266,13 @@ def main(argv=None):
     pygame.time.set_timer(pygame.USEREVENT, 1000)
     font = pygame.font.SysFont('Consolas', 140)
 
-
-
     # Class 1: 120s
     pitch = [440, 440, 440]
-    timer120 = Timer(timePrecounter, 12, nrLap, nrBreak, timeBreak, soundState, pitch)
+    timer120 = Timer(precounter, timePrecounterCountdown, timePrecounterTime120, 120, nrLap, nrBreak, timeBreak, soundState, pitch)
 
     # Class 2: 135s
     pitch = [380, 380, 380]
-    timer135 = Timer(timePrecounter, 8, nrLap, nrBreak, timeBreak, soundState, pitch)
+    timer135 = Timer(precounter, timePrecounterCountdown, timePrecounterTime135, 135, nrLap, nrBreak, timeBreak, soundState, pitch)
 
     # This is the main loop
     while True:
