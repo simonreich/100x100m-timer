@@ -21,8 +21,8 @@ Die Anzeige ist zur besseren Lesbarkeit aus dem Wasser bewusst schlicht im schwa
 Optional: Eine lokale Virtual Environment für Python installieren. Die einzige Abhängigkeit ist pygame.
 
 ```bash
-virtualenv -p python3 100x1000-timer
-cd 100x1000-timer
+virtualenv -p python3 100x100-timer
+cd 100x100-timer
 source bin/activate
 pip install pygame
 ```
